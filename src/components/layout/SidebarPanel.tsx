@@ -4,7 +4,7 @@ import { ChevronDown, type LucideIcon } from 'lucide-react';
 
 interface SidebarPanelProps {
   title: string;
-  icon?: LucideIcon | React.ReactNode;
+  icon?: LucideIcon;
   children: React.ReactNode;
   className?: string;
   collapsible?: boolean;
@@ -23,15 +23,8 @@ export const SidebarPanel: React.FC<SidebarPanelProps> = ({
 
   const renderIcon = () => {
     if (!Icon) return null;
-
-    // If it's a React component function (like Lucide icons), render it
-    if (typeof Icon === 'function') {
-      const IconComponent = Icon as React.ComponentType<React.SVGProps<SVGElement>>;
-      return <IconComponent className="w-4 h-4 text-casino-gold" aria-hidden="true" />;
-    }
-
-    // If it's already a React node (emoji, custom JSX), render it directly
-    return Icon;
+    // Always render LucideIcon as JSX
+    return <Icon className="w-4 h-4 text-casino-gold" aria-hidden="true" />;
   };
 
   return (
