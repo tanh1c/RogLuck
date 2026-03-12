@@ -96,9 +96,24 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         <h2 className="text-xl md:text-2xl font-pixel text-casino-gold mb-2">
           {combatMode ? '⚔️ Slot Combat ⚔️' : '🎰 Slot Machine'}
         </h2>
-        <p className="text-gray-400 text-xs">
+        <p className="text-gray-400 text-xs mb-4">
           {combatMode ? 'Win rounds to deal damage to the enemy!' : 'Spin and match symbols to win!'}
         </p>
+
+        {/* How to Play */}
+        <div className="bg-gray-900/50 rounded-lg p-4 text-left border border-purple-500/30">
+          <h4 className="text-xs font-pixel text-casino-gold mb-2">📖 How to Play:</h4>
+          <ul className="text-xs text-gray-300 space-y-1">
+            <li>• <strong>Select Bet:</strong> Choose 5g, 10g, 25g, 50g, or 100g</li>
+            <li>• <strong>SPIN:</strong> Spin the 3 reels</li>
+            <li>• <strong>Win:</strong> Match 2 or 3 symbols for prizes</li>
+          </ul>
+          <h4 className="text-xs font-pixel text-casino-gold mt-3 mb-2">💡 Payouts:</h4>
+          <ul className="text-xs text-gray-300 space-y-1">
+            <li>• 2 matching symbols = ½ payout</li>
+            <li>• 3 matching symbols = full payout (up to 10x!)</li>
+          </ul>
+        </div>
       </div>
 
       {/* Balance Display */}

@@ -231,6 +231,7 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(139, 92, 246, 0.5) rgba(31, 41, 55, 0.5);
   padding-right: 0.5rem;
+  padding-left: 0.5rem;
 }
 
 /* Sidebar panel styling */

@@ -54,7 +54,9 @@
       "Bash(git add src/components/combat/CombatLog.tsx src/tests/utils/floor-generator.test.ts src/tests/utils/gambling-logic.test.ts src/tests/stores/gameStore.test.ts vitest.config.ts tsconfig.node.json)",
       "Bash(git add src/components/layout/SidebarPanel.tsx src/components/layout/SidebarHUD.tsx src/components/combat/CombatLog.tsx src/components/meta/QuickStats.tsx src/components/game/MiniMap.tsx src/components/layout/Sidebar.tsx src/components/layout/GameLayout.tsx src/index.css)",
       "Bash(git add README.md)",
-      "Bash(git add -A)"
+      "Bash(git add -A)",
+      "Bash(git push -u origin master)",
+      "Bash(git push origin master)"
     ],
     "additionalDirectories": [
       "c:\\Users\\LG\\Desktop\\Study Material\\AI\\24-01-2026\\RogLuck\\docs"

@@ -112,9 +112,26 @@ export const BlackjackGame: React.FC<BlackjackGameProps> = ({
         <h2 className="text-xl font-pixel text-casino-gold mb-2">
           {combatMode ? '⚔️ Blackjack Combat ⚔️' : '🎰 Blackjack'}
         </h2>
-        <p className="text-gray-400 text-xs">
+        <p className="text-gray-400 text-xs mb-4">
           {combatMode ? 'Win rounds to deal damage to the enemy!' : 'Beat the dealer without going over 21!'}
         </p>
+
+        {/* How to Play */}
+        <div className="bg-gray-900/50 rounded-lg p-4 text-left border border-purple-500/30">
+          <h4 className="text-xs font-pixel text-casino-gold mb-2">📖 How to Play:</h4>
+          <ul className="text-xs text-gray-300 space-y-1">
+            <li>• <strong>Deal:</strong> You and dealer each get 2 cards</li>
+            <li>• <strong>Hit:</strong> Take another card (risk busting)</li>
+            <li>• <strong>Stand:</strong> Keep your hand, dealer plays</li>
+            <li>• <strong>Win:</strong> Get closer to 21 than dealer</li>
+          </ul>
+          <h4 className="text-xs font-pixel text-casino-gold mt-3 mb-2">💡 Tips:</h4>
+          <ul className="text-xs text-gray-300 space-y-1">
+            <li>• Blackjack (Ace + 10) pays 1.5x</li>
+            <li>• Dealer must hit on 16, stand on 17</li>
+            <li>• Bust (over 21) = automatic loss</li>
+          </ul>
+        </div>
       </div>
 
       {/* Dealer Area */}

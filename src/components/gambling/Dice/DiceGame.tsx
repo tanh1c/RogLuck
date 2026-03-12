@@ -155,9 +155,19 @@ export const DiceGame: React.FC<DiceGameProps> = ({
         <h2 className="text-xl md:text-2xl font-pixel text-casino-gold mb-2">
           {combatMode ? '⚔️ Dice Combat ⚔️' : '🎲 Dice Game'}
         </h2>
-        <p className="text-gray-400 text-xs">
+        <p className="text-gray-400 text-xs mb-4">
           {combatMode ? 'Win rounds to deal damage to the enemy!' : 'Roll the dice and win big!'}
         </p>
+
+        {/* How to Play */}
+        <div className="bg-gray-900/50 rounded-lg p-4 text-left border border-purple-500/30">
+          <h4 className="text-xs font-pixel text-casino-gold mb-2">📖 How to Play:</h4>
+          <ul className="text-xs text-gray-300 space-y-1">
+            <li>• <strong>Choose Bet Type:</strong> Sum, Over/Under, Specific Number, or Exact Total</li>
+            <li>• <strong>Add Bet:</strong> Select amount and place your bet</li>
+            <li>• <strong>ROLL:</strong> Roll 2 dice and match your bets</li>
+          </ul>
+        </div>
       </div>
 
       {/* Balance Display */}

@@ -128,11 +128,21 @@ export const RouletteGame: React.FC<RouletteGameProps> = ({
           <h2 className="text-xl md:text-2xl font-pixel text-casino-gold mb-2">
             {combatMode ? '⚔️ Roulette Combat ⚔️' : '🎰 Roulette'}
           </h2>
-          <p className="text-gray-400 text-xs">
+          <p className="text-gray-400 text-xs mb-4">
             {combatMode
               ? 'Win rounds to deal damage to the enemy!'
               : 'Place your bets and spin the wheel!'}
           </p>
+
+          {/* How to Play */}
+          <div className="bg-gray-900/50 rounded-lg p-4 text-left border border-purple-500/30">
+            <h4 className="text-xs font-pixel text-casino-gold mb-2">📖 How to Play:</h4>
+            <ul className="text-xs text-gray-300 space-y-1">
+              <li>• <strong>Place Bets:</strong> Choose number, color, or type</li>
+              <li>• <strong>SPIN:</strong> Wheel spins and lands on a number</li>
+              <li>• <strong>Win:</strong> Match your bet to the result</li>
+            </ul>
+          </div>
         </div>
 
         {/* Balance Display */}

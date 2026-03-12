@@ -56,9 +56,25 @@ export const PokerGame: React.FC<PokerGameProps> = ({
         <h2 className="text-xl font-pixel text-casino-gold mb-2">
           {combatMode ? '⚔️ Poker Combat ⚔️' : '🃏 Poker Duel'}
         </h2>
-        <p className="text-gray-400 text-xs">
+        <p className="text-gray-400 text-xs mb-4">
           {combatMode ? 'Win rounds to deal damage to the enemy!' : 'Highest hand value wins!'}
         </p>
+
+        {/* How to Play */}
+        <div className="bg-gray-900/50 rounded-lg p-4 text-left border border-purple-500/30">
+          <h4 className="text-xs font-pixel text-casino-gold mb-2">📖 How to Play:</h4>
+          <ul className="text-xs text-gray-300 space-y-1">
+            <li>• <strong>Deal Cards:</strong> Receive 5 cards</li>
+            <li>• <strong>Play Hand:</strong> Compare with enemy</li>
+            <li>• <strong>Win:</strong> Have better poker hand</li>
+          </ul>
+          <h4 className="text-xs font-pixel text-casino-gold mt-3 mb-2">🏆 Hand Rankings:</h4>
+          <ul className="text-xs text-gray-300 space-y-1">
+            <li>Royal Flush &gt; Straight Flush &gt; Four of a Kind</li>
+            <li>Full House &gt; Flush &gt; Straight</li>
+            <li>Three of a Kind &gt; Two Pair &gt; One Pair &gt; High Card</li>
+          </ul>
+        </div>
       </div>
 
       {/* Enemy Area */}
