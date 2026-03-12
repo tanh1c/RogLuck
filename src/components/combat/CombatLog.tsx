@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { SidebarPanel } from '../layout/SidebarPanel';
-import { MessageSquare } from 'lucide-react';
 
 export const CombatLog: React.FC = () => {
   const { combatLog } = useGameStore();
