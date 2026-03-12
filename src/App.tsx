@@ -80,6 +80,48 @@ function App() {
         addCombatLog(`🎰 Entering gambling combat with ${room.enemy.name}!`);
         setCurrentScreen('gambling-encounter');
       }
+    } else if (room && room.type === 'treasure' && room.reward) {
+      // Treasure room - collect reward immediately
+      if (room.reward.type === 'gold' && room.reward.amount) {
+        addGold(room.reward.amount);
+        addCombatLog(`💰 Collected ${room.reward.amount} gold from treasure room!`);
+      } else if (room.reward.type === 'card' && room.reward.card) {
+        // Add card to collection
+        const { unlockCard } = useMetaStore.getState();
+        unlockCard(room.reward.card.id);
+        addCombatLog(`🃏 Discovered card: ${room.reward.card.name}!`);
+      } else if (room.reward.type === 'relic' && room.reward.relic) {
+        addCombatLog(`✨ Found relic: ${room.reward.relic.name}! (Not yet implemented)`);
+      }
+      // Clear the reward so it's only collected once
+      room.reward = undefined;
+      setRooms([...rooms]);
+    } else if (room && room.type === 'rest') {
+      // Rest room - heal player
+      const { heal } = useGameStore.getState();
+      heal(30);
+      addCombatLog('💤 Rested and restored 30 HP!');
+    } else if (room && room.type === 'shop') {
+      // Shop room - open meta shop
+      setCurrentScreen('meta-shop');
+    } else if (room && room.type === 'elite' && room.enemy) {
+      // Elite room - start elite gambling encounter
+      const rand = Math.random();
+      if (rand < 0.25) setGamblingType('poker');
+      else if (rand < 0.5) setGamblingType('blackjack');
+      else if (rand < 0.75) setGamblingType('roulette');
+      else if (rand < 1) setGamblingType('dice');
+      setCurrentEnemy(room.enemy);
+      setPlayerTurn(true);
+      addCombatLog(`⚔️ Entering ELITE combat with ${room.enemy.name}!`);
+      setCurrentScreen('gambling-encounter');
+    } else if (room && room.type === 'boss' && room.enemy) {
+      // Boss room - start boss gambling encounter (always poker for final battle)
+      setGamblingType('poker');
+      setCurrentEnemy(room.enemy);
+      setPlayerTurn(true);
+      addCombatLog(`👹 BOSS BATTLE with ${room.enemy.name}!`);
+      setCurrentScreen('gambling-encounter');
     }
   };
 
