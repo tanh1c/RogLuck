@@ -1,0 +1,50 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Achievement Notification Animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out forwards;
+}
+
+/* Pixel font glow effect */
+.font-pixel {
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Button press effect */
+.btn-pixel:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #00000030, 0 3px 0 #00000050, 0 4px 4px #00000030 !important;
+}
+
+/* Custom scrollbar for achievements list */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #fbbf24;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #f59e0b;
+}
