@@ -13,13 +13,14 @@ import { CharacterUnlockScreen } from './components/meta/CharacterUnlockScreen';
 import { Statistics } from './components/meta/Statistics';
 import { Achievements } from './components/meta/Achievements';
 import { AchievementNotification } from './components/meta/AchievementNotification';
+import { CardCollection } from './components/meta/CardCollection';
 import { PixelButton } from './components/ui/PixelButton';
 import { CHARACTER_CLASSES, CharacterClass } from './types/characters';
 import { Room } from './types/game';
 import { generateFloor } from './utils/floor-generator';
 import './App.css';
 
-type Screen = 'menu' | 'character-select' | 'game' | 'floor-map' | 'gambling-encounter' | 'collection' | 'shop' | 'meta-shop' | 'character-unlock' | 'statistics' | 'achievements';
+type Screen = 'menu' | 'character-select' | 'game' | 'floor-map' | 'gambling-encounter' | 'shop' | 'meta-shop' | 'character-unlock' | 'statistics' | 'achievements';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('menu');
@@ -27,6 +28,7 @@ function App() {
   const [showCharacterUnlock, setShowCharacterUnlock] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showCollection, setShowCollection] = useState(false);
   const [newAchievement, setNewAchievement] = useState<{
     name: string;
     description: string;
@@ -194,6 +196,14 @@ function App() {
     setCurrentScreen('menu');
   };
 
+  const handleOpenCollection = () => {
+    setShowCollection(true);
+  };
+
+  const handleCloseCollection = () => {
+    setShowCollection(false);
+  };
+
   const handleDismissAchievement = () => {
     setNewAchievement(null);
   };
@@ -295,6 +305,7 @@ function App() {
                 onStats={handleOpenStatistics}
                 onAchievements={handleOpenAchievements}
                 onCharacterUnlocks={handleOpenCharacterUnlock}
+                onCollection={handleOpenCollection}
               />
               {/* Casino Coins Display */}
               <div className="mt-8 text-sm font-pixel text-casino-gold">
@@ -453,6 +464,10 @@ function App() {
 
       {showAchievements && currentScreen !== 'achievements' && (
         <Achievements onClose={handleCloseAchievements} />
+      )}
+
+      {showCollection && (
+        <CardCollection onClose={handleCloseCollection} />
       )}
 
       {newAchievement && (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Save, ShoppingBag, BarChart3, Trophy } from 'lucide-react';
+import { Play, Save, ShoppingBag, BarChart3, Trophy, Layers } from 'lucide-react';
 import { useSaveLoad } from '../../hooks/useSaveLoad';
 
 interface MainMenuProps {
@@ -9,6 +9,7 @@ interface MainMenuProps {
   onStats: () => void;
   onAchievements: () => void;
   onCharacterUnlocks: () => void;
+  onCollection: () => void;
 }
 
 export const MainMenu: React.FC<MainMenuProps> = ({
@@ -18,6 +19,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   onStats,
   onAchievements,
   onCharacterUnlocks,
+  onCollection,
 }) => {
   const { hasSave } = useSaveLoad();
 
@@ -73,6 +75,14 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           <span className="text-sm">Trophies</span>
         </button>
       </div>
+
+      <button
+        onClick={onCollection}
+        className="flex items-center gap-3 p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors btn-pixel"
+      >
+        <Layers className="w-6 h-6" />
+        Card Collection
+      </button>
     </div>
   );
 };
