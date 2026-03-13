@@ -152,6 +152,7 @@ function App() {
   };
 
   const handleBackToMenu = () => {
+    setGameOver(false); // Reset game over state
     setCurrentScreen('menu');
   };
 
@@ -177,6 +178,7 @@ function App() {
   };
 
   const handleCloseStatistics = () => {
+    setGameOver(false); // Reset game over state
     setShowStatistics(false);
     setCurrentScreen('menu');
   };
@@ -187,6 +189,7 @@ function App() {
   };
 
   const handleCloseAchievements = () => {
+    setGameOver(false); // Reset game over state
     setShowAchievements(false);
     setCurrentScreen('menu');
   };
