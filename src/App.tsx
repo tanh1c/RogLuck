@@ -105,7 +105,7 @@ function App() {
       addCombatLog('💤 Rested and restored 30 HP!');
     } else if (room && room.type === 'shop') {
       // Shop room - open meta shop
-      setCurrentScreen('meta-shop');
+      setShowMetaShop(true);
     } else if (room && room.type === 'elite' && room.enemy) {
       // Elite room - start elite gambling encounter
       const rand = Math.random();
@@ -441,7 +441,10 @@ function App() {
           <div className="bg-casino-purple p-8 rounded-lg text-center pixel-border">
             <h2 className="text-2xl font-pixel mb-4">💀 Game Over</h2>
             <button
-              onClick={() => setCurrentScreen('menu')}
+              onClick={() => {
+                setGameOver(false);
+                setCurrentScreen('menu');
+              }}
               className="px-6 py-3 bg-casino-gold text-casino-dark font-pixel rounded-lg btn-pixel"
             >
               Back to Menu
