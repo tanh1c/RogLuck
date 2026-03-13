@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   RouletteBet,
   spin,
@@ -18,6 +18,8 @@ interface RouletteGameProps {
   onCombatResult?: (result: 'win' | 'lose' | 'tie', damage?: number) => void;
   // Starting balance for standalone mode
   initialBalance?: number;
+  // Key prop to force reset when combat round changes
+  roundKey?: number;
 }
 
 export const RouletteGame: React.FC<RouletteGameProps> = ({
@@ -26,6 +28,7 @@ export const RouletteGame: React.FC<RouletteGameProps> = ({
   combatMode = false,
   onCombatResult,
   initialBalance = 100,
+  roundKey = 0,
 }) => {
   const [balance, setBalance] = useState(initialBalance);
   const [selectedBets, setSelectedBets] = useState<RouletteBet[]>([]);
@@ -34,6 +37,22 @@ export const RouletteGame: React.FC<RouletteGameProps> = ({
   const [lastWinnings, setLastWinnings] = useState(0);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | 'tie' | null>(null);
   const [message, setMessage] = useState<string>('');
+  const [hasCalledResult, setHasCalledResult] = useState(false);
+
+  // Reset game when roundKey changes (parent signals new round)
+  useEffect(() => {
+    resetGame();
+  }, [roundKey]);
+
+  const resetGame = () => {
+    setSelectedBets([]);
+    setResult(null);
+    setLastWinnings(0);
+    setGameResult(null);
+    setMessage('');
+    setHasCalledResult(false);
+    setSpinning(false);
+  };
 
   const handleBetSelect = useCallback((newBet: RouletteBet) => {
     if (!isValidBet(newBet)) return;
@@ -94,7 +113,8 @@ export const RouletteGame: React.FC<RouletteGameProps> = ({
         setGameResult('win');
 
         // Determine result type for combat
-        if (combatMode && onCombatResult) {
+        if (combatMode && onCombatResult && !hasCalledResult) {
+          setHasCalledResult(true);
           // Calculate damage multiplier based on win amount
           const totalBet = selectedBets.reduce((sum, bet) => sum + bet.amount, 0);
           const multiplier = totalWinnings / totalBet;
@@ -106,7 +126,8 @@ export const RouletteGame: React.FC<RouletteGameProps> = ({
         setMessage('💀 No luck this time!');
         setGameResult('lose');
 
-        if (combatMode && onCombatResult) {
+        if (combatMode && onCombatResult && !hasCalledResult) {
+          setHasCalledResult(true);
           onCombatResult('lose');
         } else {
           onResult('lose');
@@ -201,7 +222,7 @@ export const RouletteGame: React.FC<RouletteGameProps> = ({
           </div>
         )}
 
-        {/* Controls */}
+        {/* Controls - In combat mode, only show game action buttons */}
         <div className="flex flex-wrap gap-4 justify-center">
           <PixelButton
             onClick={handleSpin}
@@ -220,13 +241,24 @@ export const RouletteGame: React.FC<RouletteGameProps> = ({
             🗑️ Clear
           </PixelButton>
 
-          <PixelButton
-            onClick={onExit}
-            disabled={spinning}
-            variant="danger"
-          >
-            {gameResult ? 'Close' : 'Exit'}
-          </PixelButton>
+          {!combatMode && (
+            <PixelButton
+              onClick={onExit}
+              disabled={spinning}
+              variant="danger"
+            >
+              {gameResult ? 'Close' : 'Exit'}
+            </PixelButton>
+          )}
+
+          {combatMode && gameResult && (
+            <PixelButton
+              onClick={resetGame}
+              variant="primary"
+            >
+              Next Round
+            </PixelButton>
+          )}
         </div>
 
         {/* Payout Info */}

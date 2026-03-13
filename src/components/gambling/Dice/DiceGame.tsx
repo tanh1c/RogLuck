@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   rollDice,
   calculateWinnings,
@@ -20,6 +20,8 @@ interface DiceGameProps {
   onCombatResult?: (result: 'win' | 'lose', damage?: number) => void;
   // Starting balance for standalone mode
   initialBalance?: number;
+  // Key prop to force reset when combat round changes
+  roundKey?: number;
 }
 
 export const DiceGame: React.FC<DiceGameProps> = ({
@@ -28,6 +30,7 @@ export const DiceGame: React.FC<DiceGameProps> = ({
   combatMode = false,
   onCombatResult,
   initialBalance = 100,
+  roundKey = 0,
 }) => {
   const [balance, setBalance] = useState(initialBalance);
   const [bets, setBets] = useState<DiceBet[]>([]);
@@ -36,6 +39,22 @@ export const DiceGame: React.FC<DiceGameProps> = ({
   const [lastWinnings, setLastWinnings] = useState(0);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
   const [message, setMessage] = useState<string>('');
+  const [hasCalledResult, setHasCalledResult] = useState(false);
+
+  // Reset game when roundKey changes (parent signals new round)
+  useEffect(() => {
+    resetGame();
+  }, [roundKey]);
+
+  const resetGame = () => {
+    setBets([]);
+    setDiceResult(null);
+    setLastWinnings(0);
+    setGameResult(null);
+    setMessage('');
+    setHasCalledResult(false);
+    setRolling(false);
+  };
 
   // Current bet type selector
   const [selectedBetType, setSelectedBetType] = useState<BetType>('sum');
@@ -124,7 +143,8 @@ export const DiceGame: React.FC<DiceGameProps> = ({
         setMessage(`🎉 You won ${totalWinnings} gold! Rolled: ${roll.dice.join(', ')} = ${roll.total}`);
         setGameResult('win');
 
-        if (combatMode && onCombatResult) {
+        if (combatMode && onCombatResult && !hasCalledResult) {
+          setHasCalledResult(true);
           const multiplier = totalWinnings / totalBet;
           onCombatResult('win', multiplier);
         } else {
@@ -134,7 +154,8 @@ export const DiceGame: React.FC<DiceGameProps> = ({
         setMessage(`💀 No luck this time! Rolled: ${roll.dice.join(', ')} = ${roll.total}`);
         setGameResult('lose');
 
-        if (combatMode && onCombatResult) {
+        if (combatMode && onCombatResult && !hasCalledResult) {
+          setHasCalledResult(true);
           onCombatResult('lose');
         } else {
           onResult('lose');
@@ -409,7 +430,7 @@ export const DiceGame: React.FC<DiceGameProps> = ({
         </div>
       </div>
 
-      {/* Controls */}
+      {/* Controls - In combat mode, only show game action buttons */}
       <div className="flex flex-wrap gap-4 justify-center">
         <PixelButton
           onClick={handleRoll}
@@ -420,13 +441,24 @@ export const DiceGame: React.FC<DiceGameProps> = ({
           {rolling ? '🎲 Rolling...' : '🎲 ROLL'}
         </PixelButton>
 
-        <PixelButton
-          onClick={onExit}
-          disabled={rolling}
-          variant="danger"
-        >
-          {gameResult ? 'Close' : 'Exit'}
-        </PixelButton>
+        {!combatMode && (
+          <PixelButton
+            onClick={onExit}
+            disabled={rolling}
+            variant="danger"
+          >
+            {gameResult ? 'Close' : 'Exit'}
+          </PixelButton>
+        )}
+
+        {combatMode && gameResult && (
+          <PixelButton
+            onClick={resetGame}
+            variant="primary"
+          >
+            Next Round
+          </PixelButton>
+        )}
       </div>
 
       {/* Payout Info */}

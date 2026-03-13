@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BlackjackCard,
   createDeck,
@@ -14,23 +14,39 @@ import { PixelCard } from '../../ui/PixelCard';
 
 interface BlackjackGameProps {
   onResult: (result: 'win' | 'lose' | 'tie', multiplier?: number) => void;
-  onExit: () => void;
   // Combat mode props
   combatMode?: boolean;
   onCombatResult?: (result: 'win' | 'lose' | 'tie', multiplier?: number) => void;
+  // Key prop to force reset when combat round changes
+  roundKey?: number;
 }
 
 export const BlackjackGame: React.FC<BlackjackGameProps> = ({
   onResult,
-  onExit,
   combatMode = false,
   onCombatResult,
+  roundKey = 0,
 }) => {
   const [deck, setDeck] = useState<BlackjackCard[]>([]);
   const [playerHand, setPlayerHand] = useState<BlackjackCard[]>([]);
   const [dealerHand, setDealerHand] = useState<BlackjackCard[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | 'tie' | null>(null);
+  const [hasCalledResult, setHasCalledResult] = useState(false);
+
+  // Reset game when roundKey changes (parent signals new round)
+  useEffect(() => {
+    resetGame();
+  }, [roundKey]);
+
+  const resetGame = () => {
+    setDeck([]);
+    setPlayerHand([]);
+    setDealerHand([]);
+    setGameOver(false);
+    setResult(null);
+    setHasCalledResult(false);
+  };
 
   const dealInitialCards = () => {
     const newDeck = shuffleDeck(createDeck());
@@ -42,12 +58,14 @@ export const BlackjackGame: React.FC<BlackjackGameProps> = ({
     setDeck(newDeck.slice(4));
     setGameOver(false);
     setResult(null);
+    setHasCalledResult(false);
 
     if (isBlackjack(player)) {
       setGameOver(true);
       setResult('win');
       // Use combat callback if in combat mode, otherwise use regular callback
-      if (combatMode && onCombatResult) {
+      if (combatMode && onCombatResult && !hasCalledResult) {
+        setHasCalledResult(true);
         onCombatResult('win', 1.5);
       } else {
         onResult('win', 1.5);
@@ -68,7 +86,8 @@ export const BlackjackGame: React.FC<BlackjackGameProps> = ({
       setGameOver(true);
       setResult('lose');
       // Use combat callback if in combat mode, otherwise use regular callback
-      if (combatMode && onCombatResult) {
+      if (combatMode && onCombatResult && !hasCalledResult) {
+        setHasCalledResult(true);
         onCombatResult('lose');
       } else {
         onResult('lose');
@@ -96,7 +115,8 @@ export const BlackjackGame: React.FC<BlackjackGameProps> = ({
     setResult(resultValue);
 
     // Use combat callback if in combat mode, otherwise use regular callback
-    if (combatMode && onCombatResult) {
+    if (combatMode && onCombatResult && !hasCalledResult) {
+      setHasCalledResult(true);
       onCombatResult(resultValue);
     } else {
       onResult(resultValue);
@@ -158,7 +178,7 @@ export const BlackjackGame: React.FC<BlackjackGameProps> = ({
         </div>
       </div>
 
-      {/* Controls */}
+      {/* Controls - In combat mode, only show game action buttons, not Exit */}
       <div className="flex gap-4 justify-center">
         {playerHand.length === 0 ? (
           <PixelButton onClick={dealInitialCards} variant="primary">
@@ -174,14 +194,10 @@ export const BlackjackGame: React.FC<BlackjackGameProps> = ({
             </PixelButton>
           </>
         ) : (
-          <>
-            <PixelButton onClick={dealInitialCards} variant="primary">
-              New Game
-            </PixelButton>
-            <PixelButton onClick={onExit} variant="secondary">
-              Exit
-            </PixelButton>
-          </>
+          /* After game over, auto-reset for next round in combat mode */
+          <PixelButton onClick={resetGame} variant="primary" disabled={!combatMode}>
+            Next Round
+          </PixelButton>
         )}
       </div>
 

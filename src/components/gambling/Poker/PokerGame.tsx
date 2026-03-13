@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PokerCard as CardType, createDeck, shuffleDeck, drawCards, evaluateHand, determineWinner } from '../../../utils/gambling-logic/poker';
 import { PokerCard } from './PokerCard';
 import { PixelButton } from '../../ui/PixelButton';
@@ -6,22 +6,37 @@ import { PixelCard } from '../../ui/PixelCard';
 
 interface PokerGameProps {
   onResult: (result: 'win' | 'lose' | 'tie') => void;
-  onExit: () => void;
   // Combat mode props
   combatMode?: boolean;
   onCombatResult?: (result: 'win' | 'lose' | 'tie', multiplier?: number) => void;
+  // Key prop to force reset when combat round changes
+  roundKey?: number;
 }
 
 export const PokerGame: React.FC<PokerGameProps> = ({
   onResult,
-  onExit,
   combatMode = false,
   onCombatResult,
+  roundKey = 0,
 }) => {
   const [playerHand, setPlayerHand] = useState<CardType[]>([]);
   const [enemyHand, setEnemyHand] = useState<CardType[]>([]);
   const [phase, setPhase] = useState<'betting' | 'playing' | 'result'>('betting');
   const [result, setResult] = useState<'win' | 'lose' | 'tie' | null>(null);
+  const [hasCalledResult, setHasCalledResult] = useState(false);
+
+  // Reset game when roundKey changes (parent signals new round)
+  useEffect(() => {
+    resetGame();
+  }, [roundKey]);
+
+  const resetGame = () => {
+    setPlayerHand([]);
+    setEnemyHand([]);
+    setPhase('betting');
+    setResult(null);
+    setHasCalledResult(false);
+  };
 
   const dealCards = () => {
     const deck = shuffleDeck(createDeck());
@@ -31,6 +46,8 @@ export const PokerGame: React.FC<PokerGameProps> = ({
     setPlayerHand(player);
     setEnemyHand(enemy);
     setPhase('playing');
+    setResult(null);
+    setHasCalledResult(false);
   };
 
   const playHand = () => {
@@ -43,7 +60,8 @@ export const PokerGame: React.FC<PokerGameProps> = ({
     setPhase('result');
 
     // Call appropriate callback based on mode
-    if (combatMode && onCombatResult) {
+    if (combatMode && onCombatResult && !hasCalledResult) {
+      setHasCalledResult(true);
       onCombatResult(resultValue);
     } else {
       onResult(resultValue);
@@ -101,7 +119,7 @@ export const PokerGame: React.FC<PokerGameProps> = ({
         </div>
       </div>
 
-      {/* Controls */}
+      {/* Controls - In combat mode, only show game action buttons */}
       <div className="flex gap-4 justify-center">
         {phase === 'betting' && (
           <PixelButton onClick={dealCards} variant="primary">
@@ -115,9 +133,11 @@ export const PokerGame: React.FC<PokerGameProps> = ({
           </PixelButton>
         )}
 
-        <PixelButton onClick={onExit} variant="secondary">
-          {phase === 'result' ? 'Close' : 'Fold'}
-        </PixelButton>
+        {phase === 'result' && (
+          <PixelButton onClick={resetGame} variant="primary" disabled={!combatMode}>
+            Next Round
+          </PixelButton>
+        )}
       </div>
 
       {/* Result Display */}

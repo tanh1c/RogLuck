@@ -45,6 +45,7 @@ export const GamblingEncounter: React.FC<GamblingEncounterProps> = ({
   const [showReward, setShowReward] = useState(false);
   const [newUnlockedCard, setNewUnlockedCard] = useState<Card | null>(null);
   const [pendingCardId, setPendingCardId] = useState<string | null>(null);
+  const [roundKey, setRoundKey] = useState(0);
 
   const DAMAGE_PER_WIN = 10;
   const PLAYER_DAMAGE_PER_LOSS = 10;
@@ -134,6 +135,7 @@ export const GamblingEncounter: React.FC<GamblingEncounterProps> = ({
         setTimeout(() => {
           setGameResult(null);
           setIsProcessing(false);
+          setRoundKey(prev => prev + 1); // Trigger game reset
         }, 1500);
       }
     } else if (result === 'lose') {
@@ -156,6 +158,7 @@ export const GamblingEncounter: React.FC<GamblingEncounterProps> = ({
         setTimeout(() => {
           setGameResult(null);
           setIsProcessing(false);
+          setRoundKey(prev => prev + 1); // Trigger game reset
         }, 1500);
       }
     } else {
@@ -164,6 +167,7 @@ export const GamblingEncounter: React.FC<GamblingEncounterProps> = ({
       setTimeout(() => {
         setGameResult(null);
         setIsProcessing(false);
+        setRoundKey(prev => prev + 1); // Trigger game reset
       }, 1500);
     }
   };
@@ -253,14 +257,14 @@ export const GamblingEncounter: React.FC<GamblingEncounterProps> = ({
               combatMode={true}
               onResult={() => {}}
               onCombatResult={handleCombatResult}
-              onExit={handleExit}
+              roundKey={roundKey}
             />
           ) : gamblingType === 'blackjack' ? (
             <BlackjackGame
               combatMode={true}
               onResult={() => {}}
               onCombatResult={handleCombatResult}
-              onExit={handleExit}
+              roundKey={roundKey}
             />
           ) : gamblingType === 'roulette' ? (
             <RouletteGame
@@ -268,6 +272,7 @@ export const GamblingEncounter: React.FC<GamblingEncounterProps> = ({
               onResult={() => {}}
               onCombatResult={handleCombatResult}
               onExit={handleExit}
+              roundKey={roundKey}
             />
           ) : gamblingType === 'dice' ? (
             <DiceGame
@@ -275,6 +280,7 @@ export const GamblingEncounter: React.FC<GamblingEncounterProps> = ({
               onResult={() => {}}
               onCombatResult={handleCombatResult}
               onExit={handleExit}
+              roundKey={roundKey}
             />
           ) : (
             <SlotMachine
@@ -282,6 +288,7 @@ export const GamblingEncounter: React.FC<GamblingEncounterProps> = ({
               onResult={() => {}}
               onCombatResult={handleCombatResult}
               onExit={handleExit}
+              roundKey={roundKey}
             />
           )}
         </div>

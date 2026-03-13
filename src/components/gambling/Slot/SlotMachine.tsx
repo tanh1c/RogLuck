@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   spin,
   SYMBOL_VALUES,
@@ -19,6 +19,8 @@ interface SlotMachineProps {
   onCombatResult?: (result: 'win' | 'lose', damage?: number) => void;
   // Starting balance for standalone mode
   initialBalance?: number;
+  // Key prop to force reset when combat round changes
+  roundKey?: number;
 }
 
 export const SlotMachine: React.FC<SlotMachineProps> = ({
@@ -27,6 +29,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   combatMode = false,
   onCombatResult,
   initialBalance = 100,
+  roundKey = 0,
 }) => {
   const [balance, setBalance] = useState(initialBalance);
   const [bet, setBet] = useState<number>(10);
@@ -35,6 +38,20 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   const [lastWinnings, setLastWinnings] = useState(0);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
   const [message, setMessage] = useState<string>('');
+  const [hasCalledResult, setHasCalledResult] = useState(false);
+
+  // Reset game when roundKey changes (parent signals new round)
+  useEffect(() => {
+    resetGame();
+  }, [roundKey]);
+
+  const resetGame = () => {
+    setSpinning(false);
+    setGameResult(null);
+    setLastWinnings(0);
+    setMessage('');
+    setHasCalledResult(false);
+  };
 
   const handleSpin = useCallback(() => {
     if (spinning) return;
@@ -70,7 +87,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         setMessage(`🎉 ${getWinDescription(result.reels)} Won ${winnings} gold!`);
         setGameResult('win');
 
-        if (combatMode && onCombatResult) {
+        if (combatMode && onCombatResult && !hasCalledResult) {
+          setHasCalledResult(true);
           const multiplier = winnings / bet;
           onCombatResult('win', multiplier);
         } else {
@@ -80,7 +98,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         setMessage('💀 No luck this time!');
         setGameResult('lose');
 
-        if (combatMode && onCombatResult) {
+        if (combatMode && onCombatResult && !hasCalledResult) {
+          setHasCalledResult(true);
           onCombatResult('lose');
         } else {
           onResult('lose');
@@ -200,7 +219,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         ))}
       </div>
 
-      {/* Controls */}
+      {/* Controls - In combat mode, only show game action buttons */}
       <div className="flex flex-wrap gap-4 justify-center mb-6">
         <PixelButton
           onClick={handleSpin}
@@ -211,13 +230,24 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           {spinning ? '🎰 Spinning...' : '🎰 SPIN'}
         </PixelButton>
 
-        <PixelButton
-          onClick={onExit}
-          disabled={spinning}
-          variant="danger"
-        >
-          {gameResult ? 'Close' : 'Exit'}
-        </PixelButton>
+        {!combatMode && (
+          <PixelButton
+            onClick={onExit}
+            disabled={spinning}
+            variant="danger"
+          >
+            {gameResult ? 'Close' : 'Exit'}
+          </PixelButton>
+        )}
+
+        {combatMode && gameResult && (
+          <PixelButton
+            onClick={resetGame}
+            variant="primary"
+          >
+            Next Round
+          </PixelButton>
+        )}
       </div>
 
       {/* Paytable */}
