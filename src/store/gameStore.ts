@@ -192,8 +192,8 @@ export const useGameStore = create<GameStateWithEffects & GameActions>((set, get
     set((state) => ({ gold: state.gold - amount }));
   },
 
-  setGameOver: (victory) => {
-    set({ isGameOver: true, isVictory: victory });
+  setGameOver: (gameOver) => {
+    set({ isGameOver: gameOver });
   },
 
   resetGame: () => {

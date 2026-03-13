@@ -95,9 +95,10 @@ function App() {
       } else if (room.reward.type === 'relic' && room.reward.relic) {
         addCombatLog(`✨ Found relic: ${room.reward.relic.name}! (Not yet implemented)`);
       }
-      // Clear the reward so it's only collected once
-      room.reward = undefined;
-      setRooms([...rooms]);
+      // Clear the reward so it's only collected once - create new array to trigger re-render
+      const newRooms = [...rooms];
+      newRooms[roomIndex] = { ...room, reward: undefined };
+      setRooms(newRooms);
     } else if (room && room.type === 'rest') {
       // Rest room - heal player
       const { heal } = useGameStore.getState();
